@@ -7,31 +7,76 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/OTP.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
+      "source": "/",
+      "destination": "/index.html"
     },
     {
-      "src": "/dashboard.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
     },
     {
-      "src": "/transaction-history.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate"
-      }
+      "source": "/transaction-history",
+      "destination": "/transaction-history.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/otp",
+      "destination": "/OTP.html"
     }
   ],
   "headers": [
+    {
+      "source": "/OTP.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    },
+    {
+      "source": "/dashboard.html",
+      "headers": [
+        {
+          "key": "Cache-Control", 
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    },
+    {
+      "source": "/transaction-history.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options", 
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
@@ -48,7 +93,7 @@
           "value": "1; mode=block"
         },
         {
-          "key": "Referrer-Policy",
+          "key": "Referrer-Policy", 
           "value": "strict-origin-when-cross-origin"
         },
         {
@@ -58,15 +103,6 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=31536000; includeSubDomains"
-        }
-      ]
-    },
-    {
-      "source": "/images/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400"
         }
       ]
     }

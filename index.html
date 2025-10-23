@@ -521,7 +521,7 @@
   <script>
     // Security: Add CSRF protection
     const generateCSRFToken = () => {
-      return 'csrf_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        return 'csrf_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
     };
 
     const csrfToken = generateCSRFToken();
@@ -529,176 +529,254 @@
 
     // Security: Verify OTP verification before allowing access
     const checkAuthentication = () => {
-      const otpVerified = sessionStorage.getItem('otpVerified');
-      const verifiedAt = sessionStorage.getItem('verifiedAt');
-      
-      // Check if OTP was verified and within reasonable time (1 hour)
-      if (!otpVerified || !verifiedAt) {
-        showSecurityAlert('Authentication required. Redirecting to login...');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2000);
-        return false;
-      }
-      
-      const verificationTime = parseInt(verifiedAt);
-      const currentTime = Date.now();
-      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-      
-      if (currentTime - verificationTime > oneHour) {
-        showSecurityAlert('Session expired. Please login again.');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2000);
-        return false;
-      }
-      
-      return true;
+        const otpVerified = sessionStorage.getItem('otpVerified');
+        const verifiedAt = sessionStorage.getItem('verifiedAt');
+        
+        // Check if OTP was verified and within reasonable time (1 hour)
+        if (!otpVerified || !verifiedAt) {
+            showSecurityAlert('Authentication required. Redirecting to login...');
+            setTimeout(() => {
+                window.location.href = 'https://oldglorybank-i2bm.vercel.app/';
+            }, 2000);
+            return false;
+        }
+        
+        const verificationTime = parseInt(verifiedAt);
+        const currentTime = Date.now();
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        if (currentTime - verificationTime > oneHour) {
+            showSecurityAlert('Session expired. Please login again.');
+            setTimeout(() => {
+                window.location.href = 'https://oldglorybank-i2bm.vercel.app/';
+            }, 2000);
+            return false;
+        }
+        
+        return true;
     };
 
     // Security: Show security alert
     function showSecurityAlert(message) {
-      const alert = document.createElement('div');
-      alert.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #f8d7da;
-        color: #721c24;
-        padding: 12px 20px;
-        border-radius: 8px;
-        border: 1px solid #f5c6cb;
-        z-index: 10000;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      `;
-      alert.textContent = message;
-      document.body.appendChild(alert);
-      
-      setTimeout(() => {
-        if (alert.parentNode) {
-          alert.remove();
-        }
-      }, 5000);
-    }
-
-    // Logout function
-    function handleLogout() {
-      // Clear session storage
-      sessionStorage.removeItem('otpVerified');
-      sessionStorage.removeItem('verifiedAt');
-      sessionStorage.removeItem('csrfToken');
-      
-      // Show logout message
-      showSecurityAlert('You have been successfully logged out.');
-      
-      // Redirect to login page after delay
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
-    }
-
-    // Initial loading screen functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check authentication first
-      if (!checkAuthentication()) {
-        return;
-      }
-
-      const loadingScreen = document.getElementById('initialLoadingScreen');
-      
-      // Show the loading screen for 5 seconds
-      setTimeout(function() {
-        loadingScreen.classList.add('fade-out');
+        const alert = document.createElement('div');
+        alert.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            z-index: 10000;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        alert.textContent = message;
+        document.body.appendChild(alert);
         
-        // Remove the loading screen after fade out completes
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check authentication first
+        if (!checkAuthentication()) {
+            return;
+        }
+
+        const loadingScreen = document.getElementById('initialLoadingScreen');
+        
+        // Show the loading screen for 5 seconds
         setTimeout(function() {
-          loadingScreen.style.display = 'none';
-        }, 500);
-      }, 5000);
+            loadingScreen.classList.add('fade-out');
+            
+            // Remove the loading screen after fade out completes
+            setTimeout(function() {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }, 5000);
+
+        // View All Accounts button
+        document.getElementById('viewAccountsBtn').addEventListener('click', function() {
+            // Security: Verify CSRF token
+            const storedToken = sessionStorage.getItem('csrfToken');
+            if (!storedToken || storedToken !== csrfToken) {
+                showSecurityAlert('Security verification failed. Please login again.');
+                setTimeout(() => {
+                    window.location.href = 'https://oldglorybank-i2bm.vercel.app/';
+                }, 2000);
+                return;
+            }
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // Show loading overlay
+            loadingOverlay.classList.add('active');
+            
+            // Wait 3 seconds then redirect to transaction history
+            setTimeout(function() {
+                // If you have a transaction history page, update this URL
+                window.location.href = 'https://your-transaction-history-repo.vercel.app/';
+            }, 3000);
+        });
+
+        // Log Off functionality
+        const logOffLink = document.querySelector('a[aria-label="Log Off"]');
+        if (logOffLink) {
+            logOffLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.clear();
+                showCustomAlert('Logged out successfully. Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'https://oldglorybank-i2bm.vercel.app/';
+                }, 1500);
+            });
+        }
+
+        // Scroll reveal animation
+        function revealOnScroll(){
+            document.querySelectorAll('.reveal').forEach(el=>{
+                const rect = el.getBoundingClientRect();
+                if(rect.top < (window.innerHeight - 60)) el.classList.add('visible');
+            })
+        }
+        revealOnScroll();
+        window.addEventListener('scroll', revealOnScroll);
+        
+        // Session timeout warning
+        let inactivityTime = 0;
+        const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+        
+        function resetInactivityTimer() {
+            inactivityTime = 0;
+        }
+        
+        function checkInactivity() {
+            inactivityTime += 1000;
+            if (inactivityTime >= sessionTimeout - 60000) { // Warn 1 minute before timeout
+                showSecurityAlert('Your session will expire in 1 minute due to inactivity.');
+            }
+            if (inactivityTime >= sessionTimeout) {
+                showSecurityAlert('Session expired due to inactivity.');
+                setTimeout(() => {
+                    window.location.href = 'https://oldglorybank-i2bm.vercel.app/';
+                }, 2000);
+            }
+        }
+        
+        // Reset timer on user activity
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        document.addEventListener('click', resetInactivityTimer);
+        
+        // Check inactivity every second
+        setInterval(checkInactivity, 1000);
+
+        // Custom alert function
+        function showCustomAlert(message, type = 'info') {
+            const existingAlert = document.querySelector('.custom-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+
+            const alert = document.createElement('div');
+            alert.className = `custom-alert custom-alert-${type}`;
+            alert.innerHTML = `
+                <div class="custom-alert-content">
+                    <span class="custom-alert-message">${message}</span>
+                    <button class="custom-alert-close">&times;</button>
+                </div>
+            `;
+
+            if (!document.querySelector('#custom-alert-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'custom-alert-styles';
+                styles.textContent = `
+                    .custom-alert {
+                        position: fixed;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 10000;
+                        min-width: 300px;
+                        max-width: 500px;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                        animation: slideDown 0.3s ease;
+                    }
+                    .custom-alert-success {
+                        background: #d4edda;
+                        border: 1px solid #c3e6cb;
+                        color: #155724;
+                    }
+                    .custom-alert-error {
+                        background: #f8d7da;
+                        border: 1px solid #f5c6cb;
+                        color: #721c24;
+                    }
+                    .custom-alert-info {
+                        background: #d1ecf1;
+                        border: 1px solid #bee5eb;
+                        color: #0c5460;
+                    }
+                    .custom-alert-content {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 12px 16px;
+                    }
+                    .custom-alert-message {
+                        flex: 1;
+                        font-weight: 500;
+                    }
+                    .custom-alert-close {
+                        background: none;
+                        border: none;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 0;
+                        margin-left: 10px;
+                        opacity: 0.7;
+                        transition: opacity 0.2s ease;
+                    }
+                    .custom-alert-close:hover {
+                        opacity: 1;
+                    }
+                    @keyframes slideDown {
+                        from {
+                            transform: translateX(-50%) translateY(-100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(-50%) translateY(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+
+            document.body.appendChild(alert);
+
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 4000);
+
+            const closeBtn = alert.querySelector('.custom-alert-close');
+            closeBtn.addEventListener('click', () => {
+                alert.remove();
+            });
+        }
     });
-
-    function revealOnScroll(){
-      document.querySelectorAll('.reveal').forEach(el=>{
-        const rect = el.getBoundingClientRect();
-        if(rect.top < (window.innerHeight - 60)) el.classList.add('visible');
-      })
-    }
-    revealOnScroll();
-    window.addEventListener('scroll', revealOnScroll);
-    
-    // Improved accessibility - keyboard navigation
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        // Close any open modals or focus on main content
-        document.querySelector('main').focus();
-      }
-    });
-
-    // Security: Add input sanitization for any future form inputs
-    const sanitizeInput = (input) => {
-      return input.replace(/[<>]/g, '').trim();
-    };
-
-    // Loading functionality for View All Accounts button
-    document.getElementById('viewAccountsBtn').addEventListener('click', function() {
-      // Security: Verify CSRF token
-      const storedToken = sessionStorage.getItem('csrfToken');
-      if (!storedToken || storedToken !== csrfToken) {
-        showSecurityAlert('Security verification failed. Please login again.');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2000);
-        return;
-      }
-
-      const loadingOverlay = document.getElementById('loadingOverlay');
-      
-      // Show loading overlay
-      loadingOverlay.classList.add('active');
-      
-      // Wait 3 seconds then redirect
-      setTimeout(function() {
-        window.location.href = 'transaction-history.html';
-      }, 3000);
-    });
-
-    // Add logout functionality to the Log Off link
-    document.getElementById('logOffLink').addEventListener('click', function(e) {
-      e.preventDefault();
-      handleLogout();
-    });
-
-    // Security: Add session timeout warning
-    let inactivityTime = 0;
-    const sessionTimeout = 30 * 60 * 1000; // 30 minutes
-    
-    function resetInactivityTimer() {
-      inactivityTime = 0;
-    }
-    
-    function checkInactivity() {
-      inactivityTime += 1000;
-      if (inactivityTime >= sessionTimeout - 60000) { // Warn 1 minute before timeout
-        showSecurityAlert('Your session will expire in 1 minute due to inactivity.');
-      }
-      if (inactivityTime >= sessionTimeout) {
-        showSecurityAlert('Session expired due to inactivity.');
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2000);
-      }
-    }
-    
-    // Reset timer on user activity
-    document.addEventListener('mousemove', resetInactivityTimer);
-    document.addEventListener('keypress', resetInactivityTimer);
-    document.addEventListener('click', resetInactivityTimer);
-    
-    // Check inactivity every second
-    setInterval(checkInactivity, 1000);
-  </script>
+</script>
 </body>
 </html>
+
 
